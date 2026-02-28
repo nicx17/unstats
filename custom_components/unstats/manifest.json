@@ -1,0 +1,12 @@
+{
+  "domain": "unstats",
+  "name": "Unstats",
+  "codeowners": ["@nicx17"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/nicx17/unstats",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/nicx17/unstats/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}
