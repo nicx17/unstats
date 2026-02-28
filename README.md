@@ -30,9 +30,9 @@ You no longer need to manage a `.env` file!
 3. Search for "Unstats".
 4. Enter your Unsplash `Username`.
 5. The integration will verify your credentials and automatically create three new sensors:
-    - `sensor.unstats_views`
-    - `sensor.unstats_downloads`
-    - `sensor.unstats_likes`
+    - `sensor.unsplash_views`
+    - `sensor.unsplash_downloads`
+    - `sensor.unsplash_likes`
 
 The sensors update every 60 minutes automatically.
 
