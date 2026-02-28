@@ -48,7 +48,7 @@ class UnstatsSensorEntity(CoordinatorEntity, SensorEntity):
         super().__init__(coordinator)
         self._metric = metric
         self._attr_icon = icon
-        self._attr_name = f"Unstats {name}"
+        self._attr_name = f"Unsplash {name}"
         self._attr_unique_id = f"{coordinator.username}_{metric}"
         self._attr_state_class = SensorStateClass.TOTAL
 
