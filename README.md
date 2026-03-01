@@ -2,7 +2,7 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
-A Home Assistant custom integration to monitor your Unsplash developer statistics!
+A Home Assistant custom integration to fetch your Unsplash statistics!
 
 Instead of relying on an external cron-job or python script, this integration polls the Unsplash API directly from within Home Assistant and natively provisions persist sensors for your Views, Downloads, and Likes.
 
