@@ -28,22 +28,6 @@ async def async_setup_entry(
     entities = [
         UnstatsSensorEntity(coordinator, "views", "mdi:eye", "Views"),
         UnstatsSensorEntity(coordinator, "downloads", "mdi:download", "Downloads"),
-        UnstatsSensorEntity(
-            coordinator, "total_photos", "mdi:image-multiple", "Total Photos"
-        ),
-        UnstatsSensorEntity(
-            coordinator,
-            "total_collections",
-            "mdi:folder-multiple-image",
-            "Total Collections",
-        ),
-        UnstatsSensorEntity(coordinator, "total_likes", "mdi:heart", "Total Likes"),
-        UnstatsSensorEntity(
-            coordinator, "followers_count", "mdi:account-group", "Followers"
-        ),
-        UnstatsSensorEntity(
-            coordinator, "following_count", "mdi:account-arrow-right", "Following"
-        ),
     ]
 
     async_add_entities(entities)
