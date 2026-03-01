@@ -6,3 +6,7 @@ __pycache__/
 DEFAULT_HACS_LISTING.md
 response_1772356815418.json
 mock_proxy_response.json
+tests/test_sensor.py
+tests/conftest.py
+tests/__init__.py
+pytest.ini
