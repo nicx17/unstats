@@ -35,9 +35,3 @@ You no longer need to manage a `.env` file!
     - `sensor.unsplash_likes`
 
 The sensors update every 60 minutes automatically.
-
-## Default HACS Store Listing
-
-For the official default HACS store listing process, follow:
-
-- `DEFAULT_HACS_LISTING.md`
