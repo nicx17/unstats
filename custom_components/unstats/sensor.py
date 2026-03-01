@@ -5,6 +5,7 @@ from __future__ import annotations
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -50,6 +51,12 @@ class UnstatsSensorEntity(CoordinatorEntity, SensorEntity):
         self._attr_name = f"Unsplash {name}"
         self._attr_unique_id = f"{coordinator.username}_{metric}"
         self._attr_state_class = SensorStateClass.TOTAL
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, coordinator.username)},
+            name=f"Unsplash - {coordinator.username}",
+            manufacturer="Unsplash",
+            entry_type="service",
+        )
 
     @property
     def native_value(self) -> int | None:
