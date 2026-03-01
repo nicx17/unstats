@@ -28,6 +28,22 @@ async def async_setup_entry(
     entities = [
         UnstatsSensorEntity(coordinator, "views", "mdi:eye", "Views"),
         UnstatsSensorEntity(coordinator, "downloads", "mdi:download", "Downloads"),
+        UnstatsSensorEntity(
+            coordinator, "total_photos", "mdi:image-multiple", "Total Photos"
+        ),
+        UnstatsSensorEntity(
+            coordinator,
+            "total_collections",
+            "mdi:folder-multiple-image",
+            "Total Collections",
+        ),
+        UnstatsSensorEntity(coordinator, "total_likes", "mdi:heart", "Total Likes"),
+        UnstatsSensorEntity(
+            coordinator, "followers_count", "mdi:account-group", "Followers"
+        ),
+        UnstatsSensorEntity(
+            coordinator, "following_count", "mdi:account-arrow-right", "Following"
+        ),
     ]
 
     async_add_entities(entities)
@@ -57,9 +73,20 @@ class UnstatsSensorEntity(CoordinatorEntity, SensorEntity):
         if self.coordinator.data is None:
             return None
 
-        # Access the specific metric total from the response JSON
-        metric_data = self.coordinator.data.get(self._metric, {})
-        return metric_data.get("total")
+        # Access data inside "public_profile" if available
+        public_profile = self.coordinator.data.get("public_profile", {})
+        if self._metric in public_profile:
+            return public_profile.get(self._metric)
+
+        # Access the specific metric from the response JSON
+        metric_data = self.coordinator.data.get(self._metric)
+
+        # If the metric is a dictionary (like views/downloads), return its 'total'
+        if isinstance(metric_data, dict):
+            return metric_data.get("total")
+
+        # Otherwise, assume it's a flat numeric value (or None)
+        return metric_data
 
     @property
     def extra_state_attributes(self):
@@ -67,9 +94,23 @@ class UnstatsSensorEntity(CoordinatorEntity, SensorEntity):
         if self.coordinator.data is None:
             return None
 
-        metric_data = self.coordinator.data.get(self._metric, {})
-        historical = metric_data.get("historical", {}).get("values", [])
+        metric_data = self.coordinator.data.get(self._metric)
+        if not isinstance(metric_data, dict):
+            return None
 
-        if historical:
-            return {"historical": historical}
-        return None
+        historical = metric_data.get("historical", {})
+
+        attrs = {}
+        values = historical.get("values", [])
+
+        if values:
+            attrs["historical"] = values
+            if len(values) > 0:
+                attrs["latest_daily_value"] = values[-1].get("value")
+
+        if "change" in historical:
+            attrs["change_30d"] = historical.get("change")
+        if "average" in historical:
+            attrs["average_30d"] = historical.get("average")
+
+        return attrs if attrs else None
