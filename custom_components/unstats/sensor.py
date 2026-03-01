@@ -28,7 +28,6 @@ async def async_setup_entry(
     entities = [
         UnstatsSensorEntity(coordinator, "views", "mdi:eye", "Views"),
         UnstatsSensorEntity(coordinator, "downloads", "mdi:download", "Downloads"),
-        UnstatsSensorEntity(coordinator, "likes", "mdi:thumb-up", "Likes"),
     ]
 
     async_add_entities(entities)
