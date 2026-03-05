@@ -1,7 +1,7 @@
 # Unstats for Home Assistant
 
 [![GitHub Release](https://img.shields.io/github/v/release/nicx17/unstats?include_prereleases&style=for-the-badge&logo=github&color=FF90C3)](https://github.com/nicx17/unstats/releases)
-[![License](https://img.shields.io/github/license/nicx17/unstats?style=for-the-badge)](LICENSE)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
 A Home Assistant custom integration to fetch your Unsplash statistics natively. Instead of relying on external cron-jobs or scripts, this integration polls your Unsplash stats directly from within Home Assistant and provisions persistent sensors for your Views, Downloads, and Likes.
