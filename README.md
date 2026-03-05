@@ -1,6 +1,6 @@
 # Unstats for Home Assistant
 
-[![GitHub (latest by date) Release](https://img.shields.io/github/v/release/nicx17/unstats?style=for-the-badge)](https://github.com/nicx17/unstats/releases)
+[![GitHub  Release (latest by date)](https://img.shields.io/github/v/release/nicx17/unstats?style=for-the-badge)](https://github.com/nicx17/unstats/releases)
 [![License](https://img.shields.io/github/license/nicx17/unstats?style=for-the-badge)](LICENSE)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
