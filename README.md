@@ -72,4 +72,9 @@ To fetch statistics without requiring users to set up complex Unsplash Developer
 
 If you run into any issues or want to request a feature, please [open an issue](https://github.com/nicx17/unstats/issues) on GitHub.
 
+**Icon Attribution:** Illustration by <a href="https://unsplash.com/@sigmund?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Compagnons</a> on <a href="https://unsplash.com/illustrations/an-orange-starburst-appears-against-white-Im-isPkce3k?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+
 **License:** This project utilizes the [GPL-3.0 License](LICENSE).
+
+
+      
