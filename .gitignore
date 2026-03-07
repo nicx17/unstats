@@ -10,3 +10,4 @@ tests/test_sensor.py
 tests/conftest.py
 tests/__init__.py
 pytest.ini
+unstats.zip
