@@ -4,17 +4,18 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
-A Home Assistant custom integration to fetch your Unsplash statistics natively. Instead of relying on external cron-jobs or scripts, this integration polls your Unsplash stats directly from within Home Assistant and provisions persistent sensors for your Views, Downloads, and Likes.
+A Home Assistant custom integration to fetch your Unsplash statistics natively. Instead of relying on external cron-jobs or scripts, this integration polls your Unsplash stats from within Home Assistant and provisions persistent sensors for your views and downloads.
 
 ---
 
 ## Provided Sensors
 
-When configured, this integration provisions three total-increasing sensors:
+When configured, this integration provisions two total-increasing sensors:
 
-* `sensor.unsplash_views` - Total lifetime views of your photos
-* `sensor.unsplash_downloads` - Total lifetime photo downloads
-* `sensor.unsplash_likes` - Total lifetime likes on your photos
+* Views
+* Downloads
+
+Home Assistant will generate entity IDs for the configured account automatically.
 
 **Note:** The sensors automatically update every 60 minutes.
 
@@ -68,6 +69,15 @@ To fetch statistics without requiring users to set up complex Unsplash Developer
 
 ---
 
+## Removal
+
+1. Go to **Settings** > **Devices & Services**.
+2. Open **Unstats**.
+3. Use the three-dot menu and choose **Delete**.
+4. Confirm the removal to delete the config entry and its entities.
+
+---
+
 ## Issues & Support
 
 If you run into any issues or want to request a feature, please [open an issue](https://github.com/nicx17/unstats/issues) on GitHub.
@@ -75,6 +85,3 @@ If you run into any issues or want to request a feature, please [open an issue](
 **Icon Attribution:** Illustration by <a href="https://unsplash.com/@sigmund?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Compagnons</a> on <a href="https://unsplash.com/illustrations/an-orange-starburst-appears-against-white-Im-isPkce3k?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
 **License:** This project utilizes the [GPL-3.0 License](LICENSE).
-
-
-      

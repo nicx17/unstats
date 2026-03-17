@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Unstats",
+        "description": "Please enter your Unsplash Username.",
+        "data": {
+          "username": "Unsplash Username"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the Unsplash API. Check your username.",
+      "invalid_auth": "Invalid username. Check your Unsplash username.",
+      "unknown": "Unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This Unsplash account is already configured."
+    }
+  }
+}

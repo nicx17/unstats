@@ -2,15 +2,43 @@
 
 from __future__ import annotations
 
-from homeassistant.components.sensor import SensorEntity, SensorStateClass
+from dataclasses import dataclass
+from typing import Any
+
+from homeassistant.components.sensor import (
+    SensorEntity,
+    SensorEntityDescription,
+    SensorStateClass,
+)
+from homeassistant.core import callback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo, DeviceEntryType
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, LOGGER
 from . import UnstatsDataUpdateCoordinator
+from .const import DOMAIN, LOGGER
+
+
+@dataclass(frozen=True, kw_only=True)
+class UnstatsSensorEntityDescription(SensorEntityDescription):
+    """Describe an Unstats sensor entity."""
+
+
+SENSOR_DESCRIPTIONS: tuple[UnstatsSensorEntityDescription, ...] = (
+    UnstatsSensorEntityDescription(
+        key="views",
+        name="Views",
+        icon="mdi:eye",
+        state_class=SensorStateClass.TOTAL,
+    ),
+    UnstatsSensorEntityDescription(
+        key="downloads",
+        name="Downloads",
+        icon="mdi:download",
+        state_class=SensorStateClass.TOTAL,
+    ),
+)
 
 
 async def async_setup_entry(
@@ -19,7 +47,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    del hass
+
+    coordinator: UnstatsDataUpdateCoordinator = entry.runtime_data
 
     # Fetch initial data so we have entities to create
     if not coordinator.data:
@@ -27,65 +57,82 @@ async def async_setup_entry(
         return
 
     entities = [
-        UnstatsSensorEntity(coordinator, "views", "mdi:eye", "Views"),
-        UnstatsSensorEntity(coordinator, "downloads", "mdi:download", "Downloads"),
+        UnstatsSensorEntity(coordinator, description)
+        for description in SENSOR_DESCRIPTIONS
     ]
 
     async_add_entities(entities)
 
 
-class UnstatsSensorEntity(CoordinatorEntity, SensorEntity):
+class UnstatsSensorEntity(SensorEntity):
     """Representation of an Unstats sensor."""
+
+    _attr_has_entity_name = True
+    _attr_should_poll = False
 
     def __init__(
         self,
         coordinator: UnstatsDataUpdateCoordinator,
-        metric: str,
-        icon: str,
-        name: str,
+        description: UnstatsSensorEntityDescription,
     ) -> None:
         """Initialize the sensor."""
-        super().__init__(coordinator)
-        self._metric = metric
-        self._attr_icon = icon
-        self._attr_name = f"Unsplash {name}"
-        self._attr_unique_id = f"{coordinator.username}_{metric}"
-        self._attr_state_class = SensorStateClass.TOTAL
+        self.coordinator = coordinator
+        self.entity_description = description
+        self._attr_unique_id = f"{coordinator.username}_{description.key}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, coordinator.username)},
-            name=f"Unsplash - {coordinator.username}",
+            name=f"Unsplash {coordinator.username}",
             manufacturer="Unsplash",
             entry_type=DeviceEntryType.SERVICE,
         )
+        self._update_from_coordinator()
 
-    @property
-    def native_value(self) -> int | None:
-        """Return the state of the sensor."""
+    async def async_added_to_hass(self) -> None:
+        """Register coordinator updates when entity is added."""
+        await super().async_added_to_hass()
+        self.async_on_remove(
+            self.coordinator.async_add_listener(self._handle_coordinator_update)
+        )
+
+    def _update_from_coordinator(self) -> None:
+        """Update cached entity attributes from coordinator data."""
+        self._attr_available = self.coordinator.last_update_success
+        if self.coordinator.data is None:
+            self._attr_native_value = None
+            if hasattr(self, "_attr_extra_state_attributes"):
+                del self._attr_extra_state_attributes
+            return
+
+        self._attr_native_value = self._get_native_value()
+        extra_state_attributes = self._get_extra_state_attributes()
+        if extra_state_attributes is None:
+            if hasattr(self, "_attr_extra_state_attributes"):
+                del self._attr_extra_state_attributes
+        else:
+            self._attr_extra_state_attributes = extra_state_attributes
+
+    def _get_native_value(self) -> int | None:
+        """Return the current native value from coordinator data."""
         if self.coordinator.data is None:
             return None
 
-        # Access data inside "public_profile" if available
         public_profile = self.coordinator.data.get("public_profile", {})
-        if self._metric in public_profile:
-            return public_profile.get(self._metric)
+        if self.entity_description.key in public_profile:
+            public_value = public_profile.get(self.entity_description.key)
+            return public_value if isinstance(public_value, int) else None
 
-        # Access the specific metric from the response JSON
-        metric_data = self.coordinator.data.get(self._metric)
-
-        # If the metric is a dictionary (like views/downloads), return its 'total'
+        metric_data = self.coordinator.data.get(self.entity_description.key)
         if isinstance(metric_data, dict):
-            return metric_data.get("total")
+            total = metric_data.get("total")
+            return total if isinstance(total, int) else None
 
-        # Otherwise, assume it's a flat numeric value (or None)
-        return metric_data
+        return metric_data if isinstance(metric_data, int) else None
 
-    @property
-    def extra_state_attributes(self):
-        """Return extra state attributes (like historical data)."""
+    def _get_extra_state_attributes(self) -> dict[str, Any] | None:
+        """Return historical attributes from coordinator data."""
         if self.coordinator.data is None:
             return None
-
-        metric_data = self.coordinator.data.get(self._metric)
+        metric_data = self.coordinator.data.get(self.entity_description.key)
         if not isinstance(metric_data, dict):
             return None
 
@@ -105,3 +152,16 @@ class UnstatsSensorEntity(CoordinatorEntity, SensorEntity):
             attrs["average_30d"] = historical.get("average")
 
         return attrs if attrs else None
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        self._update_from_coordinator()
+        self.async_write_ha_state()
+
+    async def async_update(self) -> None:
+        """Refresh data from the coordinator."""
+        if not self.enabled:
+            return
+
+        await self.coordinator.async_request_refresh()

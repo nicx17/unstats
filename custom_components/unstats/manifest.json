@@ -5,8 +5,9 @@
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/nicx17/unstats",
+  "integration_type": "service",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/nicx17/unstats/issues",
   "requirements": [],
-  "version": "1.1.1"
+  "version": "1.1.2"
 }
