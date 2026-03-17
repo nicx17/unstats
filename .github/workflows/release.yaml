@@ -1,0 +1,75 @@
+name: Release
+
+"on":
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: Existing tag to release, for example v1.1.2
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ inputs.tag_name || github.ref_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Validate tag matches manifest version
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+
+          manifest_path = "custom_components/unstats/manifest.json"
+          with open(manifest_path, encoding="utf-8") as manifest_file:
+              manifest = json.load(manifest_file)
+
+          manifest_version = manifest["version"]
+          ref_name = os.environ["RELEASE_TAG"]
+          expected_tag = f"v{manifest_version}"
+
+          if ref_name != expected_tag:
+              print(
+                  f"Tag {ref_name!r} does not match manifest version "
+                  f"{manifest_version!r} ({expected_tag!r}).",
+                  file=sys.stderr,
+              )
+              sys.exit(1)
+          PY
+
+      - name: Build release archive
+        run: |
+          mkdir -p dist/custom_components
+          cp -R custom_components/unstats dist/custom_components/unstats
+          cd dist
+          zip -r ../unstats.zip custom_components
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: unstats.zip
+          generate_release_notes: true
+          name: ${{ env.RELEASE_TAG }}
+          tag_name: ${{ env.RELEASE_TAG }}
