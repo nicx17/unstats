@@ -1,0 +1,28 @@
+version: 2
+updates:
+  # 1. Python Dependencies (pip, poetry, or pipenv)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Use "increase-if-necessary" to reduce unnecessary PR noise
+    versioning-strategy: increase-if-necessary
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+    labels:
+      - "python"
+      - "dependencies"
+
+  # 2. GitHub Actions (The "latest" way to keep workflows secure)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      actions-updates:
+        patterns:
+          - "*"
+    labels:
+      - "github-actions"
