@@ -7,7 +7,7 @@ name: Release
   workflow_dispatch:
     inputs:
       tag_name:
-        description: Existing tag to release, for example v1.1.2
+        description: Existing tag to release, for example v1.2.0
         required: true
         type: string
 
