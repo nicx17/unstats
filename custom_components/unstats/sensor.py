@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import asyncio
+
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -20,19 +21,14 @@ from . import UnstatsDataUpdateCoordinator
 from .const import DOMAIN, LOGGER
 
 
-@dataclass(frozen=True, kw_only=True)
-class UnstatsSensorEntityDescription(SensorEntityDescription):
-    """Describe an Unstats sensor entity."""
-
-
-SENSOR_DESCRIPTIONS: tuple[UnstatsSensorEntityDescription, ...] = (
-    UnstatsSensorEntityDescription(
+SENSOR_DESCRIPTIONS: tuple[SensorEntityDescription, ...] = (
+    SensorEntityDescription(
         key="views",
         name="Views",
         icon="mdi:eye",
         state_class=SensorStateClass.TOTAL,
     ),
-    UnstatsSensorEntityDescription(
+    SensorEntityDescription(
         key="downloads",
         name="Downloads",
         icon="mdi:download",
@@ -47,6 +43,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
+    await asyncio.sleep(0)
     del hass
 
     coordinator: UnstatsDataUpdateCoordinator = entry.runtime_data
@@ -73,7 +70,7 @@ class UnstatsSensorEntity(SensorEntity):
     def __init__(
         self,
         coordinator: UnstatsDataUpdateCoordinator,
-        description: UnstatsSensorEntityDescription,
+        description: SensorEntityDescription,
     ) -> None:
         """Initialize the sensor."""
         self.coordinator = coordinator
@@ -143,8 +140,7 @@ class UnstatsSensorEntity(SensorEntity):
 
         if values:
             attrs["historical"] = values
-            if len(values) > 0:
-                attrs["latest_daily_value"] = values[-1].get("value")
+            attrs["latest_daily_value"] = values[-1].get("value")
 
         if "change" in historical:
             attrs["change_30d"] = historical.get("change")

@@ -64,7 +64,10 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     return {"title": f"Unstats ({username})"}
 
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # pyright: ignore[reportGeneralTypeIssues,reportCallIssue]
+# pylint: disable=abstract-method
+class ConfigFlow(
+    config_entries.ConfigFlow, domain=DOMAIN
+):  # pyright: ignore[reportGeneralTypeIssues,reportCallIssue]
     """Handle a config flow for Unstats."""
 
     VERSION = 1
